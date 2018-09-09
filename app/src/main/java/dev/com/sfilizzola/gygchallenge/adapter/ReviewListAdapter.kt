@@ -1,6 +1,7 @@
 package dev.com.sfilizzola.gygchallenge.adapter
 
 import android.arch.lifecycle.MutableLiveData
+import dev.com.sfilizzola.gygchallenge.BaseApp
 import dev.com.sfilizzola.gygchallenge.R
 import dev.com.sfilizzola.gygchallenge.databinding.ReviewRowItemBinding
 
@@ -20,7 +21,18 @@ class ReviewListAdapter(var data: MutableLiveData<ListViewStatus>) : BaseAdapter
     }
 
     override fun bind(holder: DataBindViewHolder<ReviewRowItemBinding>, position: Int) {
-        holder.binding.viewModel = ReviewRowViewModel(items[position], data)
+        val currentItem = items[position]
+
+        if (BaseApp.favoriteList.contains(currentItem.reviewId)){
+            currentItem.isFavorite = true
+        }
+
+        holder.binding.viewModel = ReviewRowViewModel(currentItem, data)
+    }
+
+    fun removeItem(reviewItem:Review){
+        items.remove(reviewItem)
+        notifyDataSetChanged()
     }
 
 }

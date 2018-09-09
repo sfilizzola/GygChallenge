@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="dev.com.sfilizzola.gygchallenge.viewmodels.ListFragmentViewModel" />
+            type="dev.com.sfilizzola.gygchallenge.viewmodels.FavoritesFragmentViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -16,7 +16,7 @@
         android:layout_height="match_parent">
 
         <ProgressBar
-            android:id="@+id/reviews_progress"
+            android:id="@+id/favorites_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{viewModel.progressVisibility}"
@@ -26,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/reviews_recycler"
+            android:id="@+id/favorites_recycler"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="@{viewModel.recyclerVisibility}"
@@ -35,6 +35,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/review_row_item" />
+
+        <TextView
+            android:id="@+id/favorites_empty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center_horizontal"
+            android:fontFamily="@font/roboto"
+            android:text="@string/favorite_empty"
+            android:textColor="@color/textColor"
+            android:textSize="18sp"
+            android:visibility="@{viewModel.emptyVisibility}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
 
     </android.support.constraint.ConstraintLayout>
 

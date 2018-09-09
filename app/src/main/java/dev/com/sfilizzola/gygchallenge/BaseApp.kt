@@ -14,6 +14,18 @@ import javax.inject.Inject
 
 class BaseApp : Application(), HasActivityInjector{
 
+    companion object {
+        var favoriteList = ArrayList<Int>()
+
+        fun addToFavorite(reviewId:Int) {
+            favoriteList.add(reviewId)
+        }
+
+        fun removeFromFavorite(reviewId: Int){
+            favoriteList.remove(reviewId)
+        }
+    }
+
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
 

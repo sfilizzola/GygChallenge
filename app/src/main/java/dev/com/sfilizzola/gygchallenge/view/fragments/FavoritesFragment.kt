@@ -12,47 +12,52 @@ import android.view.View
 import android.view.ViewGroup
 import dev.com.sfilizzola.gygchallenge.R
 import dev.com.sfilizzola.gygchallenge.adapter.ReviewListAdapter
+import dev.com.sfilizzola.gygchallenge.databinding.FragmentFavoritesBinding
 import dev.com.sfilizzola.gygchallenge.databinding.FragmentListBinding
 
 import dev.com.sfilizzola.gygchallenge.view.viewStatus.ListViewStatus
+import dev.com.sfilizzola.gygchallenge.viewmodels.FavoritesFragmentViewModel
 import dev.com.sfilizzola.gygchallenge.viewmodels.ListFragmentViewModel
 import javax.inject.Inject
 
-class ListFragment : BaseFragment(){
+class FavoritesFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val viewModel by lazy { ViewModelProviders.of(this, viewModelFactory).get(ListFragmentViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProviders.of(this, viewModelFactory).get(FavoritesFragmentViewModel::class.java) }
 
-    private lateinit var binding: FragmentListBinding
+    private lateinit var binding: FragmentFavoritesBinding
     private lateinit var reviewAdapter: ReviewListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_favorites, container, false)
         binding.viewModel = viewModel
 
         reviewAdapter = ReviewListAdapter(viewModel.getData())
 
-        with(binding.reviewsRecycler){
+        with(binding.favoritesRecycler) {
             this.setHasFixedSize(true)
             this.adapter = reviewAdapter
             this.layoutManager = LinearLayoutManager(context)
         }
 
-        viewModel.getData().observe(this, Observer{
+        viewModel.getData().observe(this, Observer {
             it?.let { result ->
-                when(result) {
-                    is ListViewStatus.Success -> reviewAdapter.update(it.list())
-                    is ListViewStatus.Error ->  displaySnackBarError()
-                    is ListViewStatus.Click ->  {
+                when (result) {
+                    is ListViewStatus.Success -> {
+                        if (it.list().isEmpty()) {
+                            viewModel.showEmptyMessage()
+                        } else {
+                            reviewAdapter.update(it.list())
+                        }
+                    }
+                    is ListViewStatus.Error -> displaySnackBarError()
+                    is ListViewStatus.Click -> {
                         it.review()?.let {
-                            if (!it.isFavorite){
-                                viewModel.deleteReview(it)
-                            } else {
-                                viewModel.saveReview(it)
-                            }
+                            viewModel.deleteReview(it)
+                            reviewAdapter.removeItem(it)
                         }
                     }
                 }
@@ -70,7 +75,7 @@ class ListFragment : BaseFragment(){
 
 
     private fun displaySnackBarError() {
-        Snackbar.make(binding.root, R.string.retry_connection, Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(binding.root, R.string.retry_unknow_issue, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.retry_text) {
                     viewModel.getReviews()
                 }.show()

@@ -43,8 +43,8 @@ class ReviewRowViewModel(private val item: Review, private val data: MutableLive
 
 
     fun onRowClick() {
-        item.isFavorite = !item.isFavorite
         data.postValue(ListViewStatus.Click(item))
+        item.isFavorite = !item.isFavorite
         notifyPropertyChanged(BR.favorite)
     }
 

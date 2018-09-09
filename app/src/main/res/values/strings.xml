@@ -7,9 +7,13 @@
 
     <!-- GENERIC ERROR MESSAGES -->
     <string name="retry_connection">Internet issues, please try again.</string>
+    <string name="retry_unknow_issue">Ops, something went wrong, please try again.</string>
     <string name="retry_text">RETRY</string>
 
     <!-- REVIEW LABELS -->
     <string name="review_author_label">%s FROM %s</string>
+
+    <!-- FAVORITES LABELS -->
+    <string name="favorite_empty">Please add some favorites to the list, click the heart icon!</string>
 
 </resources>

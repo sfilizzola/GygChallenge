@@ -13,17 +13,18 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class ListFragmentViewModel @Inject constructor(private var repository: DataRepository) : BaseViewModel() {
+class FavoritesFragmentViewModel @Inject constructor(private var repository: DataRepository) : BaseViewModel() {
 
     private var data = MutableLiveData<ListViewStatus>()
 
     var recyclerVisibility = ObservableInt(View.GONE)
     var progressVisibility = ObservableInt(View.VISIBLE)
+    var emptyVisibility = ObservableInt(View.GONE)
 
 
     fun getReviews() {
         showLoading(true);
-        compositeDisposable.add(repository.getReviews().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(repository.getFavorties().observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe({
                     data.postValue(ListViewStatus.Success(it))
@@ -48,13 +49,13 @@ class ListFragmentViewModel @Inject constructor(private var repository: DataRepo
 
     fun getData(): MutableLiveData<ListViewStatus> = data
 
-
-    fun saveReview(review: Review) {
-        repository.saveReview(review)
-    }
-
     fun deleteReview(review: Review){
         repository.deleteReview(review)
+    }
+
+    fun showEmptyMessage() {
+        recyclerVisibility.set(View.GONE)
+        emptyVisibility.set(View.VISIBLE)
     }
 
 
