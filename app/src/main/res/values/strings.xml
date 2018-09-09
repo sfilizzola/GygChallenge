@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">GygChallenge</string>
+    <string name="app_name">GYG Challenge</string>
+
+    <!-- MENU ITENS -->
+    <string name="menu_list">Reviews</string>
+    <string name="menu_favs">Favorites</string>
+
+    <!-- GENERIC ERROR MESSAGES -->
+    <string name="retry_connection">Internet issues, please try again.</string>
+    <string name="retry_text">RETRY</string>
+
+    <!-- REVIEW LABELS -->
+    <string name="review_author_label">%s FROM %s</string>
+
 </resources>
