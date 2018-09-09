@@ -46,7 +46,15 @@ class ListFragment : BaseFragment(){
                 when(result) {
                     is ListViewStatus.Success -> reviewAdapter.update(it.list())
                     is ListViewStatus.Error ->  displaySnackBarError()
-                    is ListViewStatus.Click ->  viewModel.saveReview(it.review())
+                    is ListViewStatus.Click ->  {
+                        it.review()?.let {
+                            if (it.isFavorite){
+                                viewModel.deleteReview(it)
+                            } else {
+                                viewModel.saveReview(it)
+                            }
+                        }
+                    }
                 }
             }
         })
@@ -59,7 +67,6 @@ class ListFragment : BaseFragment(){
         super.onResume()
         viewModel.getReviews()
     }
-
 
 
     private fun displaySnackBarError() {
