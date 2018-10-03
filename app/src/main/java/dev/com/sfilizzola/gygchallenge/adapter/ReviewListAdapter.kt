@@ -27,7 +27,7 @@ class ReviewListAdapter(var data: MutableLiveData<ListViewStatus>) : BaseAdapter
             currentItem.isFavorite = true
         }
 
-        holder.binding.viewModel = ReviewRowViewModel(currentItem, data)
+        holder.binding.viewModel = ReviewRowViewModel(currentItem)
     }
 
     fun removeItem(reviewItem:Review){

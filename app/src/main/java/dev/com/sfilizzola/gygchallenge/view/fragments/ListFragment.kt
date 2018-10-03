@@ -11,10 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dev.com.sfilizzola.gygchallenge.R
-import dev.com.sfilizzola.gygchallenge.adapter.ReviewListAdapter
+import dev.com.sfilizzola.gygchallenge.adapter.ReviewsAdapter
 import dev.com.sfilizzola.gygchallenge.databinding.FragmentListBinding
 
-import dev.com.sfilizzola.gygchallenge.view.viewStatus.ListViewStatus
 import dev.com.sfilizzola.gygchallenge.viewmodels.ListFragmentViewModel
 import javax.inject.Inject
 
@@ -26,14 +25,14 @@ class ListFragment : BaseFragment(){
     private val viewModel by lazy { ViewModelProviders.of(this, viewModelFactory).get(ListFragmentViewModel::class.java) }
 
     private lateinit var binding: FragmentListBinding
-    private lateinit var reviewAdapter: ReviewListAdapter
+    private lateinit var reviewAdapter: ReviewsAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
         binding.viewModel = viewModel
 
-        reviewAdapter = ReviewListAdapter(viewModel.getData())
+        reviewAdapter = ReviewsAdapter()
 
         with(binding.reviewsRecycler){
             this.setHasFixedSize(true)
@@ -41,25 +40,17 @@ class ListFragment : BaseFragment(){
             this.layoutManager = LinearLayoutManager(context)
         }
 
-        viewModel.getData().observe(this, Observer{
-            it?.let { result ->
-                when(result) {
-                    is ListViewStatus.Success -> reviewAdapter.update(it.list())
-                    is ListViewStatus.Error ->  displaySnackBarError()
-                    is ListViewStatus.Click ->  {
-                        it.review()?.let {
-                            if (!it.isFavorite){
-                                viewModel.deleteReview(it)
-                            } else {
-                                viewModel.saveReview(it)
-                            }
-                        }
-                    }
-                }
-            }
-        })
+        setUpListeners()
 
         return binding.root
+
+    }
+
+    private fun setUpListeners() {
+
+        viewModel.pagedData.observe(this, Observer {
+            reviewAdapter.submitList(it)
+        })
 
     }
 

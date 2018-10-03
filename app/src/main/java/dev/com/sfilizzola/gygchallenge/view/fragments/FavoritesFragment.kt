@@ -13,11 +13,9 @@ import android.view.ViewGroup
 import dev.com.sfilizzola.gygchallenge.R
 import dev.com.sfilizzola.gygchallenge.adapter.ReviewListAdapter
 import dev.com.sfilizzola.gygchallenge.databinding.FragmentFavoritesBinding
-import dev.com.sfilizzola.gygchallenge.databinding.FragmentListBinding
 
 import dev.com.sfilizzola.gygchallenge.view.viewStatus.ListViewStatus
 import dev.com.sfilizzola.gygchallenge.viewmodels.FavoritesFragmentViewModel
-import dev.com.sfilizzola.gygchallenge.viewmodels.ListFragmentViewModel
 import javax.inject.Inject
 
 class FavoritesFragment : BaseFragment() {

@@ -6,7 +6,7 @@ import dev.com.sfilizzola.gygchallenge.models.Review
 import dev.com.sfilizzola.gygchallenge.view.viewStatus.ListViewStatus
 import dev.com.sfilizzola.gygchallenge.BR
 
-class ReviewRowViewModel(private val item: Review, private val data: MutableLiveData<ListViewStatus>) : BaseViewModel() {
+class ReviewRowViewModel(private val item: Review) : BaseViewModel() {
 
     @Bindable
     fun getTitle(): String {
@@ -43,7 +43,7 @@ class ReviewRowViewModel(private val item: Review, private val data: MutableLive
 
 
     fun onRowClick() {
-        data.postValue(ListViewStatus.Click(item))
+        //data.postValue(ListViewStatus.Click(item))
         item.isFavorite = !item.isFavorite
         notifyPropertyChanged(BR.favorite)
     }

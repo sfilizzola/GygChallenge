@@ -62,6 +62,8 @@ dependencies {
     implementation "org.jetbrains.anko:anko-common:0.10.5"
     implementation "org.jetbrains.anko:anko-coroutines:0.10.4"
 
+    implementation "android.arch.paging:runtime:1.0.1"
+
     implementation 'nz.bradcampbell:paperparcel:2.0.6'
     implementation 'nz.bradcampbell:paperparcel-kotlin:2.0.6' // Optional
 
