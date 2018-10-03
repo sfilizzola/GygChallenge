@@ -25,6 +25,7 @@ class ListFragmentViewModel @Inject constructor(private var repository: DataRepo
     var progressVisibility = ObservableInt(View.VISIBLE)
 
     private var factory = NetworkDataSourceFactory(repository, compositeDisposable)
+    private var data = MutableLiveData<ListViewStatus>()
 
     var pagedData: LiveData<PagedList<Review>>
         private set
@@ -66,6 +67,8 @@ class ListFragmentViewModel @Inject constructor(private var repository: DataRepo
         }
 
     }
+
+    fun getData():MutableLiveData<ListViewStatus> = data
 
     fun saveReview(review: Review) {
         repository.saveReview(review)

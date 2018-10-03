@@ -13,11 +13,12 @@ import android.view.ViewGroup
 import dev.com.sfilizzola.gygchallenge.R
 import dev.com.sfilizzola.gygchallenge.adapter.ReviewsAdapter
 import dev.com.sfilizzola.gygchallenge.databinding.FragmentListBinding
+import dev.com.sfilizzola.gygchallenge.view.viewStatus.ListViewStatus
 
 import dev.com.sfilizzola.gygchallenge.viewmodels.ListFragmentViewModel
 import javax.inject.Inject
 
-class ListFragment : BaseFragment(){
+class ListFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -32,9 +33,9 @@ class ListFragment : BaseFragment(){
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
         binding.viewModel = viewModel
 
-        reviewAdapter = ReviewsAdapter()
+        reviewAdapter = ReviewsAdapter(viewModel.getData())
 
-        with(binding.reviewsRecycler){
+        with(binding.reviewsRecycler) {
             this.setHasFixedSize(true)
             this.adapter = reviewAdapter
             this.layoutManager = LinearLayoutManager(context)
@@ -50,6 +51,26 @@ class ListFragment : BaseFragment(){
 
         viewModel.pagedData.observe(this, Observer {
             reviewAdapter.submitList(it)
+        })
+
+
+        viewModel.getData().observe(this, Observer {
+            it?.let { result ->
+                when (result) {
+                    is ListViewStatus.Click -> {
+                        it.review()?.let {
+                            if (!it.isFavorite) {
+                                viewModel.deleteReview(it)
+                            } else {
+                                viewModel.saveReview(it)
+                            }
+                        }
+                    }
+                    else -> {
+                        //TODO - other states
+                    }
+                }
+            }
         })
 
     }
