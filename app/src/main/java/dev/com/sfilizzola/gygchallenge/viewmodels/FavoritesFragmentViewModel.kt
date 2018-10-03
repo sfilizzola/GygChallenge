@@ -1,12 +1,12 @@
 package dev.com.sfilizzola.gygchallenge.viewmodels
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.ObservableInt
 import android.view.View
-import dev.com.sfilizzola.gygchallenge.BaseApp
+import dev.com.sfilizzola.gygchallenge.models.Favorite
 import dev.com.sfilizzola.gygchallenge.models.Review
 import dev.com.sfilizzola.gygchallenge.repos.DataRepository
+import dev.com.sfilizzola.gygchallenge.view.viewStatus.FavoriteViewStatus
 import dev.com.sfilizzola.gygchallenge.view.viewStatus.ListViewStatus
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class FavoritesFragmentViewModel @Inject constructor(private var repository: DataRepository) : BaseViewModel() {
 
-    private var data = MutableLiveData<ListViewStatus>()
+    private var data = MutableLiveData<FavoriteViewStatus>()
 
     var recyclerVisibility = ObservableInt(View.GONE)
     var progressVisibility = ObservableInt(View.VISIBLE)
@@ -27,10 +27,10 @@ class FavoritesFragmentViewModel @Inject constructor(private var repository: Dat
         compositeDisposable.add(repository.getFavorties().observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe({
-                    data.postValue(ListViewStatus.Success(it))
+                    data.postValue(FavoriteViewStatus.Success(it))
                     showLoading(false)
                 }, {
-                    data.postValue(ListViewStatus.Error(it.message))
+                    data.postValue(FavoriteViewStatus.Error(it.message))
                     showLoading(false)
                     Timber.e(it)
                 }))
@@ -47,15 +47,19 @@ class FavoritesFragmentViewModel @Inject constructor(private var repository: Dat
 
     }
 
-    fun getData(): MutableLiveData<ListViewStatus> = data
+    fun getData(): MutableLiveData<FavoriteViewStatus> = data
 
-    fun deleteReview(review: Review){
-        repository.deleteReview(review)
+    fun deleteReview(favorite: Favorite){
+        repository.deleteFavorites(favorite)
     }
 
     fun showEmptyMessage() {
         recyclerVisibility.set(View.GONE)
         emptyVisibility.set(View.VISIBLE)
+    }
+
+    fun reviewToFavoriteMapper(review: Review): Favorite {
+        return Favorite(review.reviewId, review.rating, review.title, review.message, review.author, review.foreignLanguage, review.date, review.languageCode, review.traveler_type, review.reviewerName, review.reviewerCountry, review.isFavorite)
     }
 
 

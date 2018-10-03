@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dev.com.sfilizzola.gygchallenge.BaseApp
 import dev.com.sfilizzola.gygchallenge.database.DatabaseClient
+import dev.com.sfilizzola.gygchallenge.database.daos.FavoritesDao
 import dev.com.sfilizzola.gygchallenge.database.daos.ReviewDao
 
 import javax.inject.Singleton
@@ -22,5 +23,11 @@ class DatabaseModule {
     @Provides @Singleton
     fun provideReviewDao(databaseClient: DatabaseClient): ReviewDao {
         return databaseClient.reviewDao()
+    }
+
+
+    @Provides @Singleton
+    fun provideFavoritesDao(databaseClient: DatabaseClient): FavoritesDao {
+        return databaseClient.favoriteDao()
     }
 }

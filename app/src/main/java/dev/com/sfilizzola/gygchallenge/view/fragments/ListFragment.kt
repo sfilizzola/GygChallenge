@@ -49,9 +49,9 @@ class ListFragment : BaseFragment(){
                     is ListViewStatus.Click ->  {
                         it.review()?.let {
                             if (!it.isFavorite){
-                                viewModel.deleteReview(it)
+                                viewModel.deleteReview(viewModel.reviewToFavoriteMapper(it))
                             } else {
-                                viewModel.saveReview(it)
+                                viewModel.saveReview(viewModel.reviewToFavoriteMapper(it))
                             }
                         }
                     }

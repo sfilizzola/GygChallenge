@@ -1,10 +1,9 @@
 package dev.com.sfilizzola.gygchallenge.viewmodels
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.ObservableInt
 import android.view.View
-import dev.com.sfilizzola.gygchallenge.BaseApp
+import dev.com.sfilizzola.gygchallenge.models.Favorite
 import dev.com.sfilizzola.gygchallenge.models.Review
 import dev.com.sfilizzola.gygchallenge.repos.DataRepository
 import dev.com.sfilizzola.gygchallenge.view.viewStatus.ListViewStatus
@@ -49,12 +48,16 @@ class ListFragmentViewModel @Inject constructor(private var repository: DataRepo
     fun getData(): MutableLiveData<ListViewStatus> = data
 
 
-    fun saveReview(review: Review) {
-        repository.saveReview(review)
+    fun saveReview(favorite: Favorite) {
+        repository.saveFavorites(favorite)
     }
 
-    fun deleteReview(review: Review){
-        repository.deleteReview(review)
+    fun deleteReview(favorite: Favorite){
+        repository.deleteFavorites(favorite)
+    }
+
+    fun reviewToFavoriteMapper(review: Review): Favorite {
+        return Favorite(review.reviewId, review.rating, review.title, review.message, review.author, review.foreignLanguage, review.date, review.languageCode, review.traveler_type, review.reviewerName, review.reviewerCountry, review.isFavorite)
     }
 
 

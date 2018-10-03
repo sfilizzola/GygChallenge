@@ -2,7 +2,9 @@ package dev.com.sfilizzola.gygchallenge.repos
 
 import android.util.AndroidException
 import dev.com.sfilizzola.gygchallenge.BaseApp
+import dev.com.sfilizzola.gygchallenge.database.daos.FavoritesDao
 import dev.com.sfilizzola.gygchallenge.database.daos.ReviewDao
+import dev.com.sfilizzola.gygchallenge.models.Favorite
 import dev.com.sfilizzola.gygchallenge.models.Review
 import dev.com.sfilizzola.gygchallenge.network.NetworkClient
 import io.reactivex.Completable
@@ -14,18 +16,19 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class DataRepository @Inject constructor(private var service: NetworkClient,
-                                         private var reviewDao: ReviewDao) {
+                                         private var reviewDao: ReviewDao,
+                                         private var favoritesDao: FavoritesDao) {
 
 
     fun getReviews(): Single<List<Review>> {
-        return getReviewsFromAPI()
-    }
-
-    fun getFavorties():Single<List<Review>>{
         return getReviewsFromDatabase()
     }
 
-    fun getFavoritesId():Single<List<Int>>{
+    fun getFavorties(): Single<List<Favorite>> {
+        return getFavoritesFromDatabase()
+    }
+
+    fun getFavoritesId(): Single<List<Int>> {
         return getReviewsFromDatabase().flatMapPublisher {
             Flowable.fromIterable(it)
         }.map {
@@ -38,12 +41,24 @@ class DataRepository @Inject constructor(private var service: NetworkClient,
             Flowable.fromIterable(it.data)
         }.map {
             Review(it.review_id, it.rating, it.title, it.message, it.author, it.foreignLanguage, it.date, it.languageCode, it.traveler_type, it.reviewerName, it.reviewerCountry)
-        }.toList()
+        }.toList().flatMap {
+            saveAllReviews(it)
+        }
     }
 
 
     private fun getReviewsFromDatabase(): Single<List<Review>> {
         return reviewDao.getAllReviews().flatMap {
+            if (it.isEmpty()) {
+                getReviewsFromAPI()
+            } else {
+                Single.just(it)
+            }
+        }
+    }
+
+    private fun getFavoritesFromDatabase(): Single<List<Favorite>> {
+        return favoritesDao.getAllFavorites().flatMap {
             if (it.isEmpty()) {
                 Single.just(ArrayList())
             } else {
@@ -52,16 +67,23 @@ class DataRepository @Inject constructor(private var service: NetworkClient,
         }
     }
 
-    fun saveReview(review: Review) {
-        Timber.d("Saving from Repository %s", review.toString())
-        BaseApp.addToFavorite(review.reviewId)
-        Completable.fromAction{reviewDao.insert(review)}.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ()
+
+    fun saveFavorites(favorite: Favorite) {
+        Timber.d("Saving from Repository %s", favorite.toString())
+        BaseApp.addToFavorite(favorite.reviewId)
+        Completable.fromAction { favoritesDao.insert(favorite) }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
 
-    fun deleteReview(review: Review) {
-        Timber.d("Deleting from Repository %s", review.toString())
-        BaseApp.removeFromFavorite(review.reviewId)
-        Completable.fromAction {  reviewDao.delete(review) }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
+    fun deleteFavorites(favorite: Favorite) {
+        Timber.d("Deleting from Repository %s", favorite.toString())
+        BaseApp.removeFromFavorite(favorite.reviewId)
+        Completable.fromAction { favoritesDao.delete(favorite) }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
+    }
+
+    fun saveAllReviews(reviews: List<Review>): Single<List<Review>> {
+        return Completable.fromAction {
+            reviewDao.insertAll(reviews)
+        }.andThen(Single.just(reviews))
     }
 
 }

@@ -14,6 +14,7 @@ import dev.com.sfilizzola.gygchallenge.R
 import dev.com.sfilizzola.gygchallenge.adapter.ReviewListAdapter
 import dev.com.sfilizzola.gygchallenge.databinding.FragmentFavoritesBinding
 import dev.com.sfilizzola.gygchallenge.databinding.FragmentListBinding
+import dev.com.sfilizzola.gygchallenge.view.viewStatus.FavoriteViewStatus
 
 import dev.com.sfilizzola.gygchallenge.view.viewStatus.ListViewStatus
 import dev.com.sfilizzola.gygchallenge.viewmodels.FavoritesFragmentViewModel
@@ -46,17 +47,17 @@ class FavoritesFragment : BaseFragment() {
         viewModel.getData().observe(this, Observer {
             it?.let { result ->
                 when (result) {
-                    is ListViewStatus.Success -> {
+                    is FavoriteViewStatus.Success -> {
                         if (it.list().isEmpty()) {
                             viewModel.showEmptyMessage()
                         } else {
                             reviewAdapter.update(it.list())
                         }
                     }
-                    is ListViewStatus.Error -> displaySnackBarError()
-                    is ListViewStatus.Click -> {
+                    is FavoriteViewStatus.Error -> displaySnackBarError()
+                    is FavoriteViewStatus.Click -> {
                         it.review()?.let {
-                            viewModel.deleteReview(it)
+                            viewModel.deleteReview(viewModel.reviewToFavoriteMapper(it))
                             reviewAdapter.removeItem(it)
                         }
                     }

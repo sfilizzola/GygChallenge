@@ -15,11 +15,4 @@ interface ReviewDao{
     @Insert
     fun insertAll(reviews:List<Review>)
 
-    @Transaction
-    @Insert
-    fun insert(review:Review)
-
-    @Delete
-    fun delete(review: Review)
-
 }
